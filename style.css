@@ -102,3 +102,8 @@ button {
 button:hover {
 	border: #999 solid 1px;
 }
+@media (max-width: 768px) {
+	body {
+		padding-top: 25%;
+	}
+}
