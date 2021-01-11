@@ -1,11 +1,15 @@
-/*  calculator layout */
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
 body {
 	background-color: #c2c2d6;
 	font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, Sans-Serif;
+	padding: 10% 25%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 10% 25%;
 }
 
 .grid {
@@ -18,10 +22,13 @@ body {
 	grid-template-columns: repeat(4, 1fr);
 	border-radius: 1%;
 	min-width: 300px;
-	max-width: 395px;
+	max-width: 300px;
 }
-.formula-screen,
-.output-screen,
+
+.display {
+	grid-column: 1/5;
+	height: 80px;
+}
 .clear,
 .num,
 .equals,
@@ -29,31 +36,37 @@ body {
 .zero {
 	border: black solid 1px;
 }
+
 .formula-screen,
 .output-screen {
 	background-color: black;
-	grid-column: 1/5;
 	border: #4d4d4d solid 3px;
 	text-align: end;
-	border-radius: 2%;
+	border-radius: 1%;
+	padding: 0;
+	max-width: 294.533px;
+	height: 38.5px;
 }
 p {
-	padding-right: 20px;
-	margin: 0;
-	font-size: 18px;
+	padding: 0 15px;
+	margin-top: 5px;
+	font-size: 24px;
 }
 .output-screen {
 	border-top: #4d4d4d solid 1.5px;
 	color: #fff;
 }
+
 .formula-screen {
 	color: #ffa500;
 	border-bottom: #4d4d4d solid 1.5px;
 }
+
 .clear {
 	background-color: #ac3939;
 	grid-column: 1/3;
 }
+
 .num {
 	background-color: #4d4d4d;
 }
@@ -65,7 +78,9 @@ p {
 .equals {
 	background-color: #004466 !important;
 	grid-row: 6/8;
+	height: 122px;
 }
+
 .operations {
 	background-color: #666666;
 }
@@ -76,9 +91,9 @@ p {
 .zero {
 	grid-column: 1/3;
 }
-/* ui features */
 button {
 	font-size: 14px;
+	height: 61px;
 	color: #fff;
 }
 button:hover {
