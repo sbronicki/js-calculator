@@ -5,7 +5,7 @@
 }
 body {
 	background-color: #c2c2d6;
-	font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, Sans-Serif;
+	font-family: 'Orbitron', sans-serif;
 	padding: 10% 25%;
 	display: flex;
 	justify-content: center;
@@ -46,12 +46,10 @@ body {
 	padding: 0;
 	max-width: 294.533px;
 	height: 38.5px;
-}
-p {
 	padding: 0 15px;
-	margin-top: 5px;
 	font-size: 24px;
 }
+
 .output-screen {
 	border-top: #4d4d4d solid 1.5px;
 	color: #fff;
@@ -83,15 +81,20 @@ p {
 
 .operations {
 	background-color: #666666;
+	font-size: 18px;
 }
 .zero,
 .decimal {
 	grid-row: 7;
 }
+.decimal {
+	font-size: 18px;
+}
 .zero {
 	grid-column: 1/3;
 }
 button {
+	font-family: 'Orbitron', sans-serif;
 	font-size: 14px;
 	height: 61px;
 	color: #fff;
