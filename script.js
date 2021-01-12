@@ -132,7 +132,7 @@ class Calculator {
 	}
 	formulaScreenText = '';
 	outputScreenText = '';
-	outputScreen = '';
+	outputScreenCurrent = '';
 	inputCount = 0;
 	inputLimit = 14;
 	screenCount = 0;
@@ -140,7 +140,6 @@ class Calculator {
 	screenArray = [];
 	screenResult;
 	evaluated = false;
-	allButtons = document.querySelectorAll('button');
 
 	zeroScreen() {
 		this.formulaScreenTextElement.innerText = '0';
@@ -157,13 +156,39 @@ class Calculator {
 		this.outputScreenText = '';
 	}
 	appendEntry(entry) {
+		// need to refactor but it works for now
 		if (this.inputCount === this.inputLimit) {
+			if (this.outputScreenCurrent === this.outputScreenTextElement.innerText) {
+				console.log('other if');
+				this.outputScreenText = 'Char limit';
+				for (let btn of allButtons) {
+					btn.disabled = true;
+					setTimeout(() => {
+						this.outputScreenTextElement.innerText = this.outputScreenCurrent;
+					}, 1499);
+					setTimeout(() => {
+						for (let btn of allButtons) {
+							btn.disabled = false;
+						}
+					}, 2000);
+					return;
+				}
+			}
+			this.outputScreenCurrent = this.outputScreenText;
+			this.screenArray.push(parseFloat(this.outputScreenCurrent));
 			this.outputScreenText = 'Char limit';
-			console.log(this.screenArray, this.screenArray[this.inputCount]);
-			// setTimeout(() => {
-			// 	console.log(this.outputScreenText);
-			// 	// this.outputScreenText = 'Char limit';
-			// }, 2000);
+			for (let btn of allButtons) {
+				btn.disabled = true;
+			}
+			setTimeout(() => {
+				this.outputScreenTextElement.innerText = this.outputScreenCurrent;
+			}, 1499);
+			setTimeout(() => {
+				for (let btn of allButtons) {
+					btn.disabled = false;
+				}
+			}, 2000);
+
 			return;
 		}
 		if (this.screenCount === this.screenLimit) return;
@@ -203,10 +228,11 @@ class Calculator {
 const formulaScreenTextElement = document.getElementById('formula-screen');
 const outputScreenTextElement = document.getElementById('output-screen');
 const numbers = document.querySelectorAll('[data-number]');
-const numsAndOps = document.querySelectorAll('[data-on-screen]');
+const numsAndOps = [ ...document.querySelectorAll('[data-on-screen]') ];
 const op = document.querySelectorAll('[data-op]');
 const equals = document.getElementById('equals');
 const clear = document.getElementById('clear');
+const allButtons = [ ...document.querySelectorAll('button') ];
 
 const calculator = new Calculator(outputScreenTextElement, formulaScreenTextElement);
 
@@ -234,7 +260,6 @@ equals.addEventListener('click', () => {
 });
 
 // still need to
-// template row minmax handle infitite expression
 // show char limit error message
 // >>>>>>>>>> diable buttons> remove massage after 2 seconds>all functionality
 // handle output when char limit reach (#e^n notation)

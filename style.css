@@ -69,6 +69,9 @@ button {
 	border: black solid 1px;
 	color: #fff;
 }
+button:hover {
+	border: #999 solid 1px;
+}
 .clear {
 	background-color: #ac3939;
 	grid-column: 1/3;
