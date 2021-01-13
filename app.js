@@ -1,113 +1,80 @@
-const clear = document.getElementById('clear');
-const division = document.getElementById('divide');
-const multiplication = document.getElementById('multiply');
-const seven = document.getElementById('seven');
-const eight = document.getElementById('eight');
-const nine = document.getElementById('nine');
-const minus = document.getElementById('minus');
-const four = document.getElementById('four');
-const five = document.getElementById('five');
-const six = document.getElementById('six');
-const plus = document.getElementById('plus');
-const one = document.getElementById('one');
-const two = document.getElementById('two');
-const three = document.getElementById('three');
+class Calculator {
+	constructor(inputScreenTextElement, formulaScreenTextElement) {
+		this.formulaScreenTextElement = formulaScreenTextElement;
+		this.inputScreenTextElement = inputScreenTextElement;
+		this.zeroScreens();
+	}
+	zeroScreens() {
+		this.inputScreenTextElement.innerText = '0';
+		this.inputScreenText = '';
+		this.formulaScreenTextElement.innerText = '0';
+		this.formulaScreenText = '';
+		this.evaluation = undefined;
+		this.op = undefined;
+	}
+	zeroInputScreen() {
+		this.inputScreenTextElement.innerText = '0';
+		this.inputScreenText = '';
+	}
+	appendNumber(number) {
+		if (this.evaluation) this.zeroScreens();
+
+		if (number === '.' && this.inputScreenText.includes('.')) return;
+
+		this.formulaScreenText = this.formulaScreenText.toString() + number.toString();
+		this.inputScreenText = this.inputScreenText.toString() + number.toString();
+	}
+	chooseOp(op) {
+		this.op = op;
+		if (this.evaluation) this.formulaScreenText = this.evaluation;
+		this.evaluation = undefined;
+	}
+	evaluate() {
+		this.evaluation = Math.round(eval(this.formulaScreenText) * 10000000000) / 10000000000;
+		this.inputScreenText = this.evaluation.toString();
+	}
+	updateDisplay() {
+		if (this.evaluation) {
+			this.formulaScreenTextElement.innerText = `${this.formulaScreenText}=`;
+			this.inputScreenTextElement.innerText = this.inputScreenText;
+			return;
+		}
+		this.formulaScreenTextElement.innerText = this.formulaScreenText;
+		this.inputScreenTextElement.innerText = this.inputScreenText;
+	}
+}
+const formulaScreenTextElement = document.getElementById('formula-screen');
+const inputScreenTextElement = document.getElementById('output-screen');
+const numbers = document.querySelectorAll('[data-number]');
+const operators = document.querySelectorAll('[data-op]');
 const equals = document.getElementById('equals');
-const zero = document.getElementById('zero');
-const decimal = document.getElementById('decimal');
-const formulaScreen = document.getElementById('formula-screen');
-const outputScreen = document.getElementById('output-screen');
+const clear = document.getElementById('clear');
 
-let allowDecimal = true;
-let allowOp = true;
-let allowClear = true;
-const inputLimit = 16;
-let inputCount = 0;
-let isFirstEntry = true;
-let isFirstOutput = true;
+const calculator = new Calculator(inputScreenTextElement, formulaScreenTextElement);
 
-// *** formula screen display *** //
-document.addEventListener('click', () => {
-	// clear function
-	if (isFirstEntry) {
-		clearFormula();
-		clearOutput();
-		isFirstEntry = false;
-	}
-	if (isFirstOutput) {
-		clearOutput();
-		isFirstOutput = false;
-	}
-	if (event.target.classList.contains('clear')) {
-		allowDecimal = true;
-		allowOp = true;
-		inputCount = 0;
-		isFirstEntry = true;
-		zeroScreen();
-	}
-
-	// check input count
-	if (inputCount === inputLimit) {
-		//disable button to avoid further input after limit reached
-		// document.querySelectorAll('button').disabled = true;
-		let entry = outputScreen.innerText;
-		outputScreen.innerText = 'Input limit reached';
-		setTimeout(() => {
-			outputScreen.innerText = entry;
-		}, 2000);
-		return;
-	}
-
-	// one decimal check
-	if (!allowDecimal && event.target.classList.contains('decimal')) return;
-	if (event.target.classList.contains('decimal')) allowDecimal = false;
-
-	// check if last entry was an operation
-	if (!allowOp && event.target.classList.contains('operations')) return;
-	if (event.target.classList.contains('operations')) {
-		allowOp = false;
-		isFirstEntry = false;
-		formulaScreen.innerText += event.target.innerText;
-		inputCount++;
-		zeroOutput();
-		isFirstOutput = true;
-	}
-	// display nums on screen
-
-	if (event.target.classList.contains('num')) {
-		formulaScreen.innerText += event.target.innerText;
-		outputScreen.innerText += event.target.innerText;
-		allowOp = true;
-		inputCount++;
-	}
+numbers.forEach((button) => {
+	button.addEventListener('click', () => {
+		calculator.appendNumber(button.innerText);
+		calculator.updateDisplay();
+	});
+});
+operators.forEach((button) => {
+	button.addEventListener('click', () => {
+		calculator.chooseOp(button.innerText);
+		calculator.appendNumber(button.innerText);
+		calculator.updateDisplay();
+		calculator.zeroInputScreen();
+	});
+});
+clear.addEventListener('click', () => {
+	calculator.zeroScreens();
 });
 
-// equals listener
-document.addEventListener('click', () => {
-	if (event.target.classList.contains('equals')) {
-		const input = formulaScreen.innerText;
-
-		const separators = [ ' ', '\\+', '-', '\\(', '\\)', '\\*', '/', ':', '\\?' ];
-
-		const inputArr = input.split(new RegExp(separators.join('|'), 'g'));
-
-		inputArr.forEach((number) => {
-			parseFloat(number);
-		});
-		console.log(inputArr);
-	}
+equals.addEventListener('click', () => {
+	calculator.evaluate();
+	calculator.updateDisplay();
 });
 
-const zeroScreen = () => {
-	formulaScreen.innerText = '0';
-	outputScreen.innerText = '0';
-};
-const clearFormula = () => {
-	formulaScreen.innerText = '';
-};
-const clearOutput = () => {
-	outputScreen.innerText = '';
-};
-const zeroOutput = () => {
-	outputScreen.innerText = '0';
-};
+//cant put starting zeros
+//cant put multiple ops
+//exception: double minus
