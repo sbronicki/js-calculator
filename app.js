@@ -20,6 +20,8 @@ class Calculator {
 		this.inputScreenText = '';
 	}
 	appendNumber(number) {
+		///////////////////////////////////////////////////////
+		// this is all to not allow input of multiple operators but allow input of two minus signs and switch to one operator if second minus sign is changed lol
 		if (!isNaN(parseFloat(number)) && this.noMoreOps === true) {
 			this.noMoreOps = false;
 			this.noMoreMinus = false;
@@ -40,17 +42,28 @@ class Calculator {
 			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -1) + number.toString();
 			return;
 		}
-
+		/////////////////////////////////////////////////////////////////////////
 		if (this.evaluation !== undefined) this.zeroScreens();
+
+		// not allow multiple decimals
 		if (number === '.' && this.inputScreenText.includes('.')) return;
-		// if (this.inputScreenText.indexOf('0') === 0) {
-		// 	this.inputScreenText.slice(1);
-		// 	return;
-		// }
+
+		////////////////////////// not allow starting zeros (no op input yet)
+		if (!isNaN(parseFloat(number)) && this.lastWasOp === undefined && this.inputScreenText.charAt(0) === '0') {
+			this.expressionScreenText = this.expressionScreenText.toString().slice(1) + number.toString();
+			this.inputScreenText = this.inputScreenText.toString().slice(1) + number.toString();
+			return;
+		}
+		////////////////////// not allow starting zeros after op is input
+		if (!isNaN(parseFloat(number)) && !this.lastWasOp && this.inputScreenText.charAt(0) === '0') {
+			this.inputScreenText = this.inputScreenText.toString().slice(1) + number.toString();
+			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -1) + number.toString();
+			return;
+		}
+		////////////////////////////////////////////////////////////////////////
 		this.expressionScreenText = this.expressionScreenText.toString() + number.toString();
 		this.inputScreenText = this.inputScreenText.toString() + number.toString();
 		if (this.lastWasOp) this.noMoreOps = true;
-
 		if (!this.lastWasOp) this.noMoreOps = false;
 	}
 	chooseOp(op) {
