@@ -13,6 +13,7 @@ class Calculator {
 		this.op = undefined;
 		this.lastWasOp = undefined;
 		this.noMoreOps = false;
+		this.noMoreMinus = false;
 	}
 	zeroInputScreen() {
 		this.inputScreenTextElement.innerText = '0';
@@ -21,7 +22,19 @@ class Calculator {
 	appendNumber(number) {
 		if (!isNaN(parseFloat(number)) && this.noMoreOps === true) {
 			this.noMoreOps = false;
+			this.noMoreMinus = false;
 			this.lastWasOp = false;
+		}
+		if (isNaN(parseFloat(number)) && this.noMoreOps === true && number === '-' && this.noMoreMinus) return;
+		if (this.noMoreMinus && isNaN(parseFloat(number))) {
+			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -2) + number.toString();
+			this.noMoreMinus = false;
+			return;
+		}
+		if (isNaN(parseFloat(number)) && this.noMoreOps === true && number === '-' && !this.noMoreMinus) {
+			this.expressionScreenText = this.expressionScreenText.toString() + number.toString();
+			this.noMoreMinus = true;
+			return;
 		}
 		if (isNaN(parseFloat(number)) && this.noMoreOps === true) {
 			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -1) + number.toString();
@@ -94,5 +107,4 @@ equals.addEventListener('click', () => {
 });
 
 //cant put starting zeros
-//cant put multiple ops
 //allow subtraction of negatives
