@@ -28,17 +28,19 @@ class Calculator {
 			this.lastWasOp = false;
 		}
 		if (isNaN(parseFloat(number)) && this.noMoreOps === true && number === '-' && this.noMoreMinus) return;
+
 		if (this.noMoreMinus && isNaN(parseFloat(number))) {
 			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -2) + number.toString();
 			this.noMoreMinus = false;
 			return;
 		}
-		if (isNaN(parseFloat(number)) && this.noMoreOps === true && number === '-' && !this.noMoreMinus) {
+		if (isNaN(parseFloat(number)) && this.noMoreOps && number === '-' && !this.noMoreMinus) {
 			this.expressionScreenText = this.expressionScreenText.toString() + number.toString();
 			this.noMoreMinus = true;
 			return;
 		}
-		if (isNaN(parseFloat(number)) && this.noMoreOps === true) {
+		if (isNaN(parseFloat(number)) && this.noMoreOps && number !== '.') {
+			console.log('here');
 			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -1) + number.toString();
 			return;
 		}
@@ -61,8 +63,10 @@ class Calculator {
 			return;
 		}
 		////////////////////////////////////////////////////////////////////////
+
 		this.expressionScreenText = this.expressionScreenText.toString() + number.toString();
 		this.inputScreenText = this.inputScreenText.toString() + number.toString();
+
 		if (this.lastWasOp) this.noMoreOps = true;
 		if (!this.lastWasOp) this.noMoreOps = false;
 	}
@@ -74,6 +78,10 @@ class Calculator {
 		this.lastWasOp = true;
 	}
 	evaluate() {
+		// allow subtraction of negatives
+		if (this.expressionScreenText.includes('--')) {
+			this.expressionScreenText = this.expressionScreenText.replace('--', '- -');
+		}
 		this.evaluation = Math.round(eval(this.expressionScreenText) * 10000000000) / 10000000000;
 		this.inputScreenText = this.evaluation.toString();
 	}
@@ -118,6 +126,3 @@ equals.addEventListener('click', () => {
 	calculator.evaluate();
 	calculator.updateDisplay();
 });
-
-//cant put starting zeros
-//allow subtraction of negatives
