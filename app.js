@@ -1,56 +1,74 @@
 class Calculator {
-	constructor(inputScreenTextElement, formulaScreenTextElement) {
-		this.formulaScreenTextElement = formulaScreenTextElement;
+	constructor(inputScreenTextElement, expressionScreenTextElement) {
+		this.expressionScreenTextElement = expressionScreenTextElement;
 		this.inputScreenTextElement = inputScreenTextElement;
 		this.zeroScreens();
 	}
 	zeroScreens() {
 		this.inputScreenTextElement.innerText = '0';
 		this.inputScreenText = '';
-		this.formulaScreenTextElement.innerText = '0';
-		this.formulaScreenText = '';
+		this.expressionScreenTextElement.innerText = '0';
+		this.expressionScreenText = '';
 		this.evaluation = undefined;
 		this.op = undefined;
+		this.lastWasOp = undefined;
+		this.noMoreOps = false;
 	}
 	zeroInputScreen() {
 		this.inputScreenTextElement.innerText = '0';
 		this.inputScreenText = '';
 	}
 	appendNumber(number) {
-		if (this.evaluation) this.zeroScreens();
+		if (!isNaN(parseFloat(number)) && this.noMoreOps === true) {
+			this.noMoreOps = false;
+			this.lastWasOp = false;
+		}
+		if (isNaN(parseFloat(number)) && this.noMoreOps === true) {
+			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -1) + number.toString();
+			return;
+		}
 
+		if (this.evaluation !== undefined) this.zeroScreens();
 		if (number === '.' && this.inputScreenText.includes('.')) return;
-
-		this.formulaScreenText = this.formulaScreenText.toString() + number.toString();
+		// if (this.inputScreenText.indexOf('0') === 0) {
+		// 	this.inputScreenText.slice(1);
+		// 	return;
+		// }
+		this.expressionScreenText = this.expressionScreenText.toString() + number.toString();
 		this.inputScreenText = this.inputScreenText.toString() + number.toString();
+		if (this.lastWasOp) this.noMoreOps = true;
+
+		if (!this.lastWasOp) this.noMoreOps = false;
 	}
 	chooseOp(op) {
+		if (this.evaluation !== undefined) this.expressionScreenText = this.evaluation;
 		this.op = op;
-		if (this.evaluation) this.formulaScreenText = this.evaluation;
+		if (this.evaluation) this.expressionScreenText = this.evaluation;
 		this.evaluation = undefined;
+		this.lastWasOp = true;
 	}
 	evaluate() {
-		this.evaluation = Math.round(eval(this.formulaScreenText) * 10000000000) / 10000000000;
+		this.evaluation = Math.round(eval(this.expressionScreenText) * 10000000000) / 10000000000;
 		this.inputScreenText = this.evaluation.toString();
 	}
 	updateDisplay() {
-		if (this.evaluation) {
-			this.formulaScreenTextElement.innerText = `${this.formulaScreenText}=`;
+		if (this.evaluation !== undefined) {
+			this.expressionScreenTextElement.innerText = `${this.expressionScreenText}=`;
 			this.inputScreenTextElement.innerText = this.inputScreenText;
 			return;
 		}
-		this.formulaScreenTextElement.innerText = this.formulaScreenText;
+		this.expressionScreenTextElement.innerText = this.expressionScreenText;
 		this.inputScreenTextElement.innerText = this.inputScreenText;
 	}
 }
-const formulaScreenTextElement = document.getElementById('formula-screen');
+const expressionScreenTextElement = document.getElementById('expression-screen');
 const inputScreenTextElement = document.getElementById('output-screen');
 const numbers = document.querySelectorAll('[data-number]');
 const operators = document.querySelectorAll('[data-op]');
 const equals = document.getElementById('equals');
 const clear = document.getElementById('clear');
 
-const calculator = new Calculator(inputScreenTextElement, formulaScreenTextElement);
+const calculator = new Calculator(inputScreenTextElement, expressionScreenTextElement);
 
 numbers.forEach((button) => {
 	button.addEventListener('click', () => {
@@ -77,4 +95,4 @@ equals.addEventListener('click', () => {
 
 //cant put starting zeros
 //cant put multiple ops
-//exception: double minus
+//allow subtraction of negatives
