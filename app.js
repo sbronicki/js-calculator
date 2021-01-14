@@ -29,7 +29,8 @@ class Calculator {
 		}
 		if (isNaN(parseFloat(number)) && this.noMoreOps === true && number === '-' && this.noMoreMinus) return;
 
-		if (this.noMoreMinus && isNaN(parseFloat(number))) {
+		if (this.noMoreMinus && isNaN(parseFloat(number)) && number !== '.') {
+			console.log('here2');
 			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -2) + number.toString();
 			this.noMoreMinus = false;
 			return;
@@ -40,7 +41,6 @@ class Calculator {
 			return;
 		}
 		if (isNaN(parseFloat(number)) && this.noMoreOps && number !== '.') {
-			console.log('here');
 			this.expressionScreenText = this.expressionScreenText.toString().slice(0, -1) + number.toString();
 			return;
 		}
